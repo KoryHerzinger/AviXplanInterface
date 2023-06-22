@@ -1,0 +1,122 @@
+﻿Avidyne XPlane interface
+$Revision: #25 $
+$DateTime: 2021/02/22 13:17:55 $
+===============================================
+
+Summary:
+===============================================
+
+The AviXplaneInterface provides a means for sharing data between the Xplane 11 application and either
+the IFD hardware or the IFD100 app running on an iPad. Flight data such as GPS position, AHRS information, and Airdata is passed to 
+the IFD/IFD100 from Xplane 11. Other  features such as autopilot command control from the IFD and Nav/Com synchronization are implemented.  
+
+Release History:
+===============================================
+0.0.3+ Basic Functionality (GPS, AHRS, Velocities and some VHF tuning)
+0.0.4+ Add selection for localhost IP selection for machines with multiple adapters
+0.0.5+ Bug fix when using non-primary ethernet device
+0.0.6+ Cleaner shutdown on connection loss
+0.0.7+ Add command line switch forceLocal for sim with real IFD (requires special sim sw in the IFD), also add ability to output Shadin FADC over byteflight serial
+0.0.8+ Add command line arg for IpAddr and ChassisId
+0.0.9+ Eliminate RPOS request to XPlane--it did not work properly with multiple consumers
+0.0.10+ Add ability to receive selected course from Arinc 429
+0.0.11+ Add Roll Steering support when Xplane AP in GPSS
+0.0.12+ Improve GS capture in LPV approach
+0.0.13+ Increase frequency for some data
+0.0.14+ Fix for iPad disconnect
+0.0.15+ Enable customer specific functionality
+0.0.16+ Increase GPS and altitude transmit rates
+0.0.17+ Customer specific data
+0.0.18+ not released
+0.0.19+ not released
+0.0.20+ Customer specific data
+0.0.21+ not released
+0.0.22+ Improve Airdata precision for Shadin FADC Build system changes
+0.0.23+ Airdata over Arinc 429 link
+0.0.24+ Enable customer specific functionality
+0.0.25+ Bug fixes
+0.0.26+ Add ability to set X-Plane IP explicitly using -x
+0.0.27+ Build system source reorganization
+0.1.1+ Build system source reorganization
+0.1.2+ Add optional VETL data input, clean up shutdown behavior Note: displayed version string is incorrect and shows 0.0.2
+0.1.3+ Add support for Split Xavion receiver. Note: displayed version string is incorrect and shows 0.0.3
+0.1.4+ Add ability to connect to an alternate IFD port number Note: displayed version string is incorrect and shows 0.0.4
+0.1.5+ Customer specific functionality Note: displayed version string is incorrect and shows 0.0.5
+0.1.7+ Customer specific functionality Note: displayed version string is incorrect and shows 0.0.7
+0.1.8+ Add rate or turn back into simulation--significantly  improves SynVis Smoothness Note: displayed version string is incorrect and shows 0.0.8
+0.1.9+ Remove VETL connection attempt when not needed Note: displayed version string is incorrect and shows 0.0.9
+0.1.10+ Add ability to block a specific dataref Note: displayed version string is incorrect and shows 0.0.10
+0.1.11+ Build system upgrade
+0.1.12+ Remove .5 scaling for AHRS Pitch
+
+Prerequisites:
+===============================================
+•   Microsoft Visual C++ 2008 Redistributable Package (x86) from Microsoft
+    https://www.microsoft.com/en-us/download/details.aspx?id=29
+•   Python 2 or 3	
+•   Xplane 11
+•   IFD running a modified LIO build. NOT FOR FLIGHT OR emulation.
+•   AviXplaneInterface.exe
+•   ENET/IO paid option. Should be on by default.
+
+IFD Hardware Setup:
+===============================================
+•   Download the 'LoadLioSimulation.dsf' from the Google drive directory to a FAT32 formatted USB fob.
+•   Enter Maintenance mode on the IFD5xx (and 4xx) by inserting the FAT32 formatted USB fob and booting the IFD.
+•   Using the right knob, highlight "Load LIO Host Sim 210308" and press in the right knob to select it. Then press "Proceed"
+    to update the software. NOTE: this will take about 40 minutes.
+•   Once the update is completed, go to the Config tab.
+•   Turn the right outer knob to get to the Main ARINC 429 Config page.
+•   Push in the right knob and set Out1 Speed to "High" and Data to "Arinc 429". Now press the right knob again to stop editing the values.
+•   Turn the right outer knob once to the right to get to the Main RS-232 Config page.
+•   Push the right knob and use the outer knob to select CHNL 2 Input.
+•   Use the inner right knob to select Shadin-ADC (it is the same as Shadin-FADC but won’t show a Fuel page).
+•   If you are using two IFDs, you should also enable CrossSync on channel 3.
+•   To configure the IFD to connect to the same network as the PC running Xplane 11, turn the right outer knob to get to the Network Configuration page.
+    NOTE: If this page is not present in the Config tab pages, then the ENET/IO paid option needs to be loaded via a DSF.
+•   On the network page, enter in the SSID and PSK of the wireless access point on one of the four available spots. Select "Remote Wi-Fi" to be assigned an IP address from the router
+•   or local to be the access point.
+•   You can now reboot the box into flight mode and remove the USB fob.
+
+Sim Startup:
+===============================================
+•   Start a new flight in X-Plane (it won’t connect from the main menu, you have to be “in” a flight)
+•   Start the IFD(s), allow WiFi (you can do this before or after you start the Interface launcher).
+•   Confirm that the IFD is connecting to your configured network in AUX->Setup 'Networking". If not, use the right knob to select your network.
+•   Run the IfdXplaneInterfaceLauncher.py python script.
+•   Once the IFD WiFi symbol turns green, you should see a new command window pop-up and data should start appearing on the IFD.
+
+Shutdown:
+===============================================
+•   Close the IfdXplaneInterfaceLauncher.py window.
+•   Close any other command windows it popped up during simulation.
+•   Power off the IFD(s).
+
+Standalone IFD100 Usage:
+===============================================
+•   The IFD100 can connect to Xplane 11 without the need for any IFD hardware.
+•   Start a new flight in X-Plane (it won’t connect from the main menu, you have to be “in” a flight)
+•   Run the "AviXplaneInterface" executable without the python launcher.
+•   On the iPad, connect to your WiFi network--must be on the same subnet as your simulator.
+•   Configure the IFD100 app for IFD550 in the iPad settings. 
+•   Start the IFD100 app, it should automatically connect and start receiving data within a few seconds.  
+•   Close the AviXplaneInterface executable before closing the IFD100 app.
+
+Additional info:
+===============================================
+•   The IfdXplaneInterfaceLauncher.py script is a launcher which kicks off the AviXplaneInterface.exe 
+    utility in IFD interface mode.  It searches for IFDs on the network and launches the
+    .exe with the correct command line flags to connect to the discovered IFDs.
+•   You can run the XplaneInterface tools on the Xplane 11 PC or a different machine on the same network.
+•   As long as the IFD is communicating, the Interface launcher will attempt to reconnect (and relaunch the interface tool) 
+    if the connection fails. 
+
+Known Issues (and workarounds when appropriate):
+===============================================
+•   Application crashes if the IFD100 app is terminated. Close the AviXplaneInterface before closing the IFD100 app.
+•   When flying a LPV approach, the glide-slope flag on Xplane's CDI remains invalid even thought the needles are accurate.
+•   Radio support is minimal from the iPad:
+    Radios cannot be swapped within the IFD100:
+        You can tune the standby radios only on the IFD100
+        You can still tune and swap radios from within Xplane
+•   No way to control Nav mode on IFD-100
